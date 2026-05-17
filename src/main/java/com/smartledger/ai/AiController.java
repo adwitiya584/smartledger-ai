@@ -23,4 +23,14 @@ public class AiController {
         String reply = aiService.chat(auth.getName(), message);
         return ResponseEntity.ok(Map.of("reply", reply));
     }
+
+    @GetMapping("/anomalies")
+    public ResponseEntity<Map<String, Object>> detectAnomalies(Authentication auth) {
+        return ResponseEntity.ok(aiService.detectAnomalies(auth.getName()));
+    }
+
+    @GetMapping("/predictions")
+    public ResponseEntity<Map<String, Object>> getPredictions(Authentication auth) {
+        return ResponseEntity.ok(aiService.getSpendingPrediction(auth.getName()));
+    }
 }

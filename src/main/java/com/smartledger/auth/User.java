@@ -24,6 +24,42 @@ public class User {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+    
+    @Column(name = "email_verified")
+    private boolean emailVerified = false;
+    
+    @Column(name = "subscription_plan")
+    private String subscriptionPlan = "FREE_TRIAL";
+
+    @Column(name = "trial_start_date")
+    private LocalDateTime trialStartDate;
+
+    @Column(name = "subscription_start_date")
+    private LocalDateTime subscriptionStartDate;
+
+    @Column(name = "subscription_end_date")
+    private LocalDateTime subscriptionEndDate;
+
+    @Column(name = "razorpay_subscription_id")
+    private String razorpaySubscriptionId;
+    
+    public String getSubscriptionPlan() { return subscriptionPlan; }
+    public void setSubscriptionPlan(String plan) { this.subscriptionPlan = plan; }
+
+    public LocalDateTime getTrialStartDate() { return trialStartDate; }
+    public void setTrialStartDate(LocalDateTime date) { this.trialStartDate = date; }
+
+    public LocalDateTime getSubscriptionStartDate() { return subscriptionStartDate; }
+    public void setSubscriptionStartDate(LocalDateTime date) { this.subscriptionStartDate = date; }
+
+    public LocalDateTime getSubscriptionEndDate() { return subscriptionEndDate; }
+    public void setSubscriptionEndDate(LocalDateTime date) { this.subscriptionEndDate = date; }
+
+    public String getRazorpaySubscriptionId() { return razorpaySubscriptionId; }
+    public void setRazorpaySubscriptionId(String id) { this.razorpaySubscriptionId = id; }
+
+    public boolean isEmailVerified() { return emailVerified; }
+    public void setEmailVerified(boolean emailVerified) { this.emailVerified = emailVerified; }
 
     @PrePersist
     public void prePersist() {
