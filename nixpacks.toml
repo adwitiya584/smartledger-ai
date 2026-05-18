@@ -1,0 +1,5 @@
+[phases.build]
+cmds = ["mvn clean package -DskipTests -q"]
+
+[start]
+cmd = "java -Dspring.profiles.active=prod -jar target/*.jar"
