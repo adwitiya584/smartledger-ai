@@ -28,7 +28,6 @@ public class AuthController {
         this.otpService = otpService;
     }
 
-    // Step 1 — Send OTP
     @PostMapping("/send-otp")
     public ResponseEntity<?> sendOtp(@RequestBody Map<String, String> body) {
         String email = body.get("email");
@@ -42,8 +41,9 @@ public class AuthController {
             otpService.sendOtp(email);
             return ResponseEntity.ok(Map.of("message", "OTP sent to " + email));
         } catch (Exception e) {
+            System.out.println("Send OTP error: " + e.getMessage());
             return ResponseEntity.status(500)
-                .body(Map.of("message", "Failed to send OTP. Check email configuration."));
+                .body(Map.of("message", "Failed to send OTP: " + e.getMessage()));
         }
     }
 

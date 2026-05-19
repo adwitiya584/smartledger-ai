@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class OtpService {
 
     private final JavaMailSender mailSender;
-    // Store OTP in memory: email -> {otp, expiry}
     private final Map<String, long[]> otpStore = new ConcurrentHashMap<>();
 
     public OtpService(JavaMailSender mailSender) {
@@ -19,46 +18,42 @@ public class OtpService {
     }
 
     public void sendOtp(String email) {
-        // Generate 6-digit OTP
         String otp = String.format("%06d", new Random().nextInt(999999));
-        long expiry = System.currentTimeMillis() + (10 * 60 * 1000); // 10 mins
-
+        long expiry = System.currentTimeMillis() + (10 * 60 * 1000);
         otpStore.put(email, new long[]{Long.parseLong(otp), expiry});
 
-        // Send email
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setSubject("Paisa Nest — Email Verification OTP");
-        message.setText(
-            "Welcome to Paisa Nest!\n\n" +
-            "Your OTP for registration is: " + otp + "\n\n" +
-            "This OTP is valid for 10 minutes.\n\n" +
-            "If you didn't request this, please ignore this email.\n\n" +
-            "— Paisa Nest Team"
-        );
-        mailSender.send(message);
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(email);
+            message.setSubject("PaisaNest — Email Verification OTP");
+            message.setText(
+                "Welcome to PaisaNest!\n\n" +
+                "Your OTP: " + otp + "\n\n" +
+                "Valid for 10 minutes.\n\n" +
+                "— PaisaNest Team"
+            );
+            mailSender.send(message);
+            System.out.println("OTP sent successfully to: " + email);
+        } catch (Exception e) {
+            System.out.println("Mail sending failed: " + e.getMessage());
+            // Don't throw — OTP is stored, just mail failed
+            throw new RuntimeException("Failed to send email: " + e.getMessage());
+        }
     }
 
     public boolean verifyOtp(String email, String otp) {
         if (!otpStore.containsKey(email)) return false;
-
         long[] stored = otpStore.get(email);
         long storedOtp = stored[0];
         long expiry = stored[1];
-
         if (System.currentTimeMillis() > expiry) {
             otpStore.remove(email);
             return false;
         }
-
         if (Long.parseLong(otp) == storedOtp) {
-            otpStore.remove(email); // OTP used — remove it
+            otpStore.remove(email);
             return true;
         }
         return false;
-    }
-
-    public boolean isEmailPendingVerification(String email) {
-        return otpStore.containsKey(email);
     }
 }
